@@ -5,4 +5,6 @@ class Shared {
   static String loginToken;
   static String deviceToken;
   static Store<AppState> globalStore;
+
+  static bool isFirstTime;
 }

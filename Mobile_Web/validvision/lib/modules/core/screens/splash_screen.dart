@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import "package:flare_flutter/flare_actor.dart";
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:validvision/modules/core/actions/open_home_screen_action.dart';
 import 'package:validvision/modules/core/models/app_state.dart';
+import 'package:validvision/modules/identity/actions/open_welcome_screen_action.dart';
 import 'package:validvision/modules/shared/shared.dart';
 
 import '../../size_config.dart';
@@ -18,42 +20,58 @@ class SplashScreenState extends State<SplashScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StoreBuilder<AppState>(
       onInitialBuild: (Store<AppState> store) async {
         Shared.globalStore = store;
-        Timer(Duration(seconds: 3), () {
-          store.dispatch(OpenHomeScreenAction());
+        Timer(Duration(seconds: 4), () {
+          store.dispatch(OpenWelcomeScreenAction());
         });
       },
       builder: (BuildContext ctx, Store<AppState> store) {
         SizeConfig().init(context);
         return Scaffold(
             key: scaffoldKey,
-            body: Material(
-                color: Colors.white,
-                child: Container(
-                    child: Center(
+            body: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: SizeConfig.safeBlockVertical * 4,
+                      horizontal: SizeConfig.safeBlockHorizontal * 4),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: SizeConfig.safeBlockHorizontal * 5,
-                            vertical: SizeConfig.safeBlockVertical * 5),
-                        child: Image.asset("assets/logo.png"),
+                      Container(
+                        width: SizeConfig.safeBlockVertical * 60,
+                        height: SizeConfig.safeBlockVertical * 60,
+                        margin: EdgeInsets.only(
+                            bottom: SizeConfig.safeBlockVertical * 4),
+                        child: FlareActor("assets/logo.flr",
+                            alignment: Alignment.center,
+                            fit: BoxFit.contain,
+                            animation: "Aura"),
                       ),
-                      Text(
-                        "welcome",
-                        style: TextStyle(
+                      Expanded(
+                        child: Text(
+                          "Valid Vision",
+                          style: TextStyle(
                             color: Color(0xff0066d8),
-                            fontSize: SizeConfig.safeBlockVertical * 5,
-                            fontWeight: FontWeight.bold),
+                            fontFamily: "Arabolical",
+                            fontSize: SizeConfig.safeBlockVertical * 8,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ))));
+                )));
       },
     );
   }
