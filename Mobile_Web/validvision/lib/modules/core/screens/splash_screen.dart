@@ -1,6 +1,4 @@
-import 'dart:async';
-
-import "package:flare_flutter/flare_actor.dart";
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -31,9 +29,6 @@ class SplashScreenState extends State<SplashScreen> {
     return StoreBuilder<AppState>(
       onInitialBuild: (Store<AppState> store) async {
         Shared.globalStore = store;
-        Timer(Duration(seconds: 4), () {
-          store.dispatch(OpenWelcomeScreenAction());
-        });
       },
       builder: (BuildContext ctx, Store<AppState> store) {
         SizeConfig().init(context);
@@ -41,37 +36,15 @@ class SplashScreenState extends State<SplashScreen> {
             key: scaffoldKey,
             body: Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: SizeConfig.safeBlockVertical * 4,
-                      horizontal: SizeConfig.safeBlockHorizontal * 4),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: SizeConfig.safeBlockVertical * 60,
-                        height: SizeConfig.safeBlockVertical * 60,
-                        margin: EdgeInsets.only(
-                            bottom: SizeConfig.safeBlockVertical * 4),
-                        child: FlareActor("assets/logo.flr",
-                            alignment: Alignment.center,
-                            fit: BoxFit.contain,
-                            animation: "Aura"),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "Valid Vision",
-                          style: TextStyle(
-                            color: Color(0xff0066d8),
-                            fontFamily: "Arabolical",
-                            fontSize: SizeConfig.safeBlockVertical * 8,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )));
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: FlareActor("assets/logo.flr",
+                  alignment: Alignment.center,
+                  fit: BoxFit.scaleDown,
+                  antialias: true, callback: (val) {
+                print(val);
+                store.dispatch(OpenWelcomeScreenAction());
+              }, animation: "intro"),
+            )));
       },
     );
   }

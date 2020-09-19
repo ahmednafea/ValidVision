@@ -1,300 +1,293 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'package:validvision/modules/core/actions/open_home_screen_action.dart';
+import 'package:validvision/modules/core/middleware/navigation_key.dart';
+import 'package:validvision/modules/core/models/app_state.dart';
 
+import '../../size_config.dart';
 import 'clip_painter.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key key, this.title}) : super(key: key);
-
-  final String title;
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  Widget _backButton() {
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left: 0, top: 10, bottom: 10),
-              child: Icon(Icons.keyboard_arrow_left, color: Colors.black),
-            ),
-            Text('Back',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _entryField(String title, {bool isPassword = false}) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextField(
-              obscureText: isPassword,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true))
-        ],
-      ),
-    );
-  }
-
-  Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-      child: Text(
-        'Login',
-        style: TextStyle(fontSize: 20, color: Colors.white),
-      ),
-    );
-  }
-
-  Widget _divider() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: <Widget>[
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          Text('or'),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                thickness: 1,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 20,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _facebookButton() {
-    return Container(
-      height: 50,
-      margin: EdgeInsets.symmetric(vertical: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xff1959a9),
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(5),
-                    topLeft: Radius.circular(5)),
-              ),
-              alignment: Alignment.center,
-              child: Text('f',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontWeight: FontWeight.w400)),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xff2872ba),
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(5),
-                    topRight: Radius.circular(5)),
-              ),
-              alignment: Alignment.center,
-              child: Text('Log in with Facebook',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _createAccountLabel() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
-      alignment: Alignment.bottomCenter,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            'Don\'t have an account ?',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          InkWell(
-            onTap: () {},
-            child: Text(
-              'Register',
-              style: TextStyle(
-                  color: Color(0xfff79c4f),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-          text: 'd',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: Color(0xffe46b10),
-          ),
-          children: [
-            TextSpan(
-              text: 'ev',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-            TextSpan(
-              text: 'rnz',
-              style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
-            ),
-          ]),
-    );
-  }
-
-  Widget _emailPasswordWidget() {
-    return Column(
-      children: <Widget>[
-        _entryField("Email id"),
-        _entryField("Password", isPassword: true),
-      ],
-    );
-  }
+  var _emailKey = TextEditingController();
+  var _passwordKey = TextEditingController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool passwordIsShown = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SingleChildScrollView(
-            child: Container(
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  flex: 3,
-                  child: SizedBox(),
-                ),
-                _title(),
-                SizedBox(
-                  height: 50,
-                ),
-                _emailPasswordWidget(),
-                SizedBox(
-                  height: 20,
-                ),
-                _submitButton(),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  alignment: Alignment.centerRight,
-                  child: Text('Forgot Password ?',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                ),
-                _divider(),
-                _facebookButton(),
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(),
-                ),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _createAccountLabel(),
-          ),
-          Positioned(top: 40, left: 0, child: _backButton()),
-          Positioned(
-              top: -MediaQuery.of(context).size.height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: Container(
-                  child: Transform.rotate(
-                angle: -pi / 3.5,
-                child: ClipPath(
-                  clipper: ClipPainter(),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * .5,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Color(0xfffbb448), Color(0xffe46b10)])),
+    return StoreBuilder<AppState>(
+        builder: (BuildContext ctx, Store<AppState> store) {
+      SizeConfig().init(context);
+      return WillPopScope(
+        onWillPop: () => _onWillPop(context),
+        child: Scaffold(
+            key: _scaffoldKey,
+            body: SingleChildScrollView(
+                child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Stack(
+                overflow: Overflow.clip,
+                children: <Widget>[
+                  Positioned(
+                      top: -MediaQuery.of(context).size.height * .15,
+                      right: -MediaQuery.of(context).size.width * .4,
+                      child: Container(
+                          child: Transform.rotate(
+                        angle: -pi / 3.5,
+                        child: ClipPath(
+                          clipper: ClipPainter(),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                  Colors.blue[900],
+                                  Colors.lightBlueAccent,
+                                  Colors.lightBlueAccent,
+                                  Colors.blue[900]
+                                ])),
+                            child: Container(
+                              height: SizeConfig.safeBlockVertical * 10,
+                            ),
+                          ),
+                        ),
+                      ))),
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                        horizontal: SizeConfig.safeBlockHorizontal * 5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "Login",
+                          style: TextStyle(
+                              color: Colors.blue[900],
+                              fontFamily: "Ubuntu",
+                              fontSize: SizeConfig.safeBlockVertical * 6),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(
+                                width: 2,
+                                color: Colors.blue[900],
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: SizeConfig.safeBlockHorizontal * 4),
+                          margin: EdgeInsets.only(
+                              right: SizeConfig.safeBlockHorizontal * 4,
+                              left: SizeConfig.safeBlockHorizontal * 4,
+                              bottom: SizeConfig.safeBlockVertical * 2,
+                              top: SizeConfig.safeBlockVertical * 8),
+                          child: TextFormField(
+                              validator: (value) {
+                                bool emailValid = RegExp(
+                                        "[a-z0-9!#\$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#\$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                                    .hasMatch(value);
+                                if (!emailValid) {
+                                  return 'Please enter a valid email';
+                                } else
+                                  return null;
+                              },
+                              controller: _emailKey,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                  labelText: "Email",
+                                  border: InputBorder.none,
+                                  hintText: "example@mail.com",
+                                  icon: Icon(
+                                    Icons.mail,
+                                    size: SizeConfig.safeBlockVertical * 4,
+                                    color: Colors.blue[900],
+                                  ))),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(
+                                width: 2,
+                                color: Colors.blue[900],
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: SizeConfig.safeBlockHorizontal * 4),
+                          margin: EdgeInsets.only(
+                              right: SizeConfig.safeBlockHorizontal * 4,
+                              left: SizeConfig.safeBlockHorizontal * 4,
+                              top: SizeConfig.safeBlockVertical * 2,
+                              bottom: SizeConfig.safeBlockVertical * 8),
+                          child: TextFormField(
+                              validator: (value) {
+                                if (value.length > 6) {
+                                  return 'Too short password';
+                                } else
+                                  return null;
+                              },
+                              controller: _passwordKey,
+                              obscureText: !passwordIsShown,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                  labelText: "Password",
+                                  border: InputBorder.none,
+                                  suffix: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          passwordIsShown = !passwordIsShown;
+                                        });
+                                      },
+                                      child: passwordIsShown
+                                          //hide
+                                          ? Image.asset(
+                                              'assets/hide_password.png',
+                                              width: 20,
+                                              fit: BoxFit.scaleDown,
+                                              color: Colors.blue[900],
+                                            )
+                                          //show
+                                          : Image.asset(
+                                              'assets/show_password.png',
+                                              fit: BoxFit.scaleDown,
+                                              width: 20,
+                                              color: Colors.blue[900],
+                                            )),
+                                  hintText: "******",
+                                  icon: Icon(
+                                    Icons.lock_outline,
+                                    size: SizeConfig.safeBlockVertical * 4,
+                                    color: Colors.blue[900],
+                                  ))),
+                        ),
+                        RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: SizeConfig.safeBlockHorizontal * 20,
+                              vertical: SizeConfig.safeBlockVertical),
+                          onPressed: () {
+                            _scaffoldKey.currentState.showSnackBar(SnackBar(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10))),
+                              elevation: 10,
+                              backgroundColor: Colors.blue[900],
+                              content: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.cyan),
+                                    ),
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal:
+                                            SizeConfig.safeBlockHorizontal * 4,
+                                        vertical: SizeConfig.safeBlockVertical),
+                                  ),
+                                  Text(
+                                    "Signing in...",
+                                    style: TextStyle(
+                                        fontSize:
+                                            SizeConfig.safeBlockVertical * 3),
+                                  )
+                                ],
+                              ),
+                              duration: Duration(seconds: 3),
+                            ));
+                            Timer(Duration(seconds: 4), () {
+                              store.dispatch(OpenHomeScreenAction());
+                            });
+                          },
+                          color: Colors.blue[900],
+                          child: Text(
+                            "login",
+                            style: TextStyle(
+                                fontSize: SizeConfig.safeBlockVertical * 4,
+                                color: Colors.white),
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.white,
+                          height: SizeConfig.safeBlockVertical * 6,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "Don't have an account? ",
+                              style: TextStyle(
+                                  fontSize: SizeConfig.safeBlockVertical * 2.6),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                navigatorKey.currentState.pop();
+                              },
+                              child: Text(
+                                "Sign Up",
+                                style: TextStyle(
+                                    color: Colors.blue[900],
+                                    fontSize:
+                                        SizeConfig.safeBlockVertical * 2.8,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              )))
-        ],
-      ),
-    )));
+                ],
+              ),
+            ))),
+      );
+    });
+  }
+
+  Future<bool> _onWillPop(BuildContext context) {
+    return showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(
+              "Are you sure?",
+              style: TextStyle(color: Colors.blue[900]),
+            ),
+            content: Text("Are you want to close Valid Vision?"),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No'),
+                textColor: Colors.white,
+                color: Colors.green,
+              ),
+              FlatButton(
+                onPressed: () {
+                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                },
+                color: Colors.red,
+                textColor: Colors.white,
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 }

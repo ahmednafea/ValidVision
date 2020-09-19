@@ -16,20 +16,7 @@ import 'modules/shared/shared.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  bool isInDebugMode = false;
-  FlutterError.onError = (FlutterErrorDetails details) {
-    if (isInDebugMode) {
-      FlutterError.dumpErrorToConsole(details);
-    } else {
-      Zone.current.handleUncaughtError(details.exception, details.stack);
-    }
-  };
-  runZoned<Future<Null>>(() async {
-    runApp(ValidVisionApp());
-  }, onError: (error, stackTrace) async {
-    print("Error: " + error.toString());
-    print(stackTrace.toString());
-  });
+  runApp(ValidVisionApp());
 }
 
 loggingMiddleware(Store<AppState> store, action, NextDispatcher next) {
@@ -67,10 +54,8 @@ class ValidVisionAppState extends State<ValidVisionApp> {
     return StoreProvider(
         store: store,
         child: MaterialApp(
-          theme: ThemeData(
-            fontFamily: 'Ubuntu',
-            primarySwatch: Colors.lightBlue,
-          ),
+          theme:
+              ThemeData(fontFamily: 'Ubuntu', primaryColor: Colors.blue[900]),
           initialRoute: '/',
           navigatorKey: navigatorKey,
           title: "Valid Vision",
